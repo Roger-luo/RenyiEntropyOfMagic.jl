@@ -20,32 +20,39 @@ function tfimMPO(sites, h::Float64)
   return MPO(ampo, sites)
 end
 
-N = 10
+N = 100
 sites = siteinds("S=1/2", N)
-psi0 = randomMPS(sites; linkdims=10)
+psi0 = randomMPS(sites; linkdims=16)
 
 # define parameters for DMRG sweeps
 sweeps = Sweeps(15)
 setmaxdim!(sweeps, 10, 20, 100, 100, 200)
-setcutoff!(sweeps, 1E-10)
+setcutoff!(sweeps, 1E-8)
 
 H = tfimMPO(sites, 1.0)
 energy, psi = dmrg(H, psi0, sweeps)
+
 
 As = map(psi.data) do t
     T = reshape(t.tensor.storage.data, size(t))
     if ndims(T) == 2
       return T
     else
-      return permutedims(T, (1, 3, 2))
+      return permutedims(T, (3, 1, 2))
     end
 end
 
-replicated_expectation(As)
-
 size.(As)
-using SparseArrays
-count(iszero, map(As[4]) do x
-  abs(x) < 1e-5 ? zero(x) : x
-end)
-Base.format_bytes(8^8 * 7^8 * sizeof(Float64))
+maximum(map(x->maximum(size(x)), As))
+length(Ranks(As).middle)
+Ranks(As)
+
+using RenyiEntropyOfMagic
+
+ranks=Ranks(
+    left_boundary=8,
+    right_boundary=8,
+    middle=[(8, 8) for _ in 1:98]
+)
+
+replicated_expectation(As; ranks)

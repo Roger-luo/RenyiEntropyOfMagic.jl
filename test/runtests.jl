@@ -42,6 +42,11 @@ end
     T2 = transfer_matrix(A2)
     st = vec(ein"ija,jib->ab"(A1, A2))
     @test naive_two_site(st) ≈ tr(T1 * T2)
+
+    A1,A2,A3 = rand(2, 3, 2), rand(3, 3, 2), rand(3, 2, 2)
+    st = vec(ein"ija,jkb,kic->abc"(A1, A2, A3))
+    T1, T2, T3 = transfer_matrix(A1), transfer_matrix(A2), transfer_matrix(A3)
+    @test naive_three_site(st) ≈ tr(T1 * T2 * T3)
 end
 
 @testset "random open boundary MPS" begin
