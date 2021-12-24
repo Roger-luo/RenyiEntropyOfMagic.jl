@@ -1,6 +1,7 @@
 module RenyiEntropyOfMagic
 
 using LinearAlgebra
+using ProgressLogging
 
 export Consts, Ranks, transfer_matrix, boundary_vector,
     hosvd3, sandwitch, left_right_kron,
@@ -145,8 +146,7 @@ function replicated_expectation(As, Os = [Consts.O for _ in 1:length(As)]; ranks
     rK, rU = boundary_decomposition(rA, rO; rank=ranks.right_boundary)
 
     K, prevU = rK, rU
-    for idx in length(As)-1:-1:2
-        @show idx
+    @progress for idx in length(As)-1:-1:2
         A, O = As[idx], Os[idx]
         left, right = ranks.middle[idx-1]
         C, U1, U2 = middle_decomposition(A, O; left, right)

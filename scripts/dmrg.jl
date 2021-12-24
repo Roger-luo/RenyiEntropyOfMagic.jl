@@ -56,3 +56,21 @@ ranks=Ranks(
 )
 
 replicated_expectation(As; ranks)
+
+
+nsites = length(As)
+Os = [Consts.O for _ in 1:length(As)]
+lA, rA = first(As), last(As)
+lO, rO = first(Os), last(Os)
+
+lK, lU = boundary_decomposition(lA, lO; rank=ranks.left_boundary)
+rK, rU = boundary_decomposition(rA, rO; rank=ranks.right_boundary)
+
+K, prevU = rK, rU
+idx = length(As)-1
+A, O = As[idx], Os[idx]
+left, right = ranks.middle[idx-1]
+C, U1, U2 = middle_decomposition(A, O; left, right)
+
+M = transpose(U2) * prevU
+K = C * kron(M, M) * K

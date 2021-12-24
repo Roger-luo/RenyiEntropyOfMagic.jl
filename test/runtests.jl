@@ -68,3 +68,7 @@ end
     @test expect ≈ dot(lT, T * rT)
     @test expect ≈ replicated_expectation([lA, A, rA])
 end
+
+@testset "tucker decomposition" begin
+    include("tucker.jl")
+end
