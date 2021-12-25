@@ -14,6 +14,7 @@ TensorToolbox = "9c690861-8ade-587a-897e-15364bc6f718"
 Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
 
 [compat]
+TensorToolbox = "1"
 julia = "1.7"
 
 [extras]
