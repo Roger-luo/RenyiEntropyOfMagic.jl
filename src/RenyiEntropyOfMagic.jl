@@ -150,7 +150,6 @@ function replicated_expectation(As, Os = [Consts.O for _ in 1:length(As)]; ranks
         A, O = As[idx], Os[idx]
         left, right = ranks.middle[idx-1]
         C, U1, U2 = middle_decomposition(A, O; left, right)
-
         M = transpose(U2) * prevU
         K = C * kron(M, M) * K
         prevU = U1
@@ -160,7 +159,7 @@ function replicated_expectation(As, Os = [Consts.O for _ in 1:length(As)]; ranks
 end
 
 function renyi_entropy_of_magic(As, Os = [Consts.O for _ in 1:length(As)]; ranks::Ranks=Ranks(As))
-    return -log(2^length(As) * replicated_expectation(As, Os; ranks))
+    return -log(2) * length(As) - log(replicated_expectation(As, Os; ranks))
 end
 
 function exact_replicated_expectation(As, Os = [Consts.O for _ in 1:length(As)])
@@ -180,7 +179,7 @@ function exact_replicated_expectation(As, Os = [Consts.O for _ in 1:length(As)])
 end
 
 function exact_renyi_entropy_of_magic(As, Os = [Consts.O for _ in 1:length(As)])
-    return -log(2^length(As) * exact_replicated_expectation(As, Os))
+    return -log(2) * length(As) - log(exact_replicated_expectation(As, Os))
 end
 
 end
