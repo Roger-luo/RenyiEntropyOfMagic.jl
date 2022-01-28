@@ -1,6 +1,7 @@
 module RenyiEntropyOfMagic
 
 using ITensors
+using ThreadsX
 using Distributed
 using Serialization
 using LinearAlgebra

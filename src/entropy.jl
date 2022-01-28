@@ -63,7 +63,7 @@ end
 function renyi_entropy(As; nsamples::Int=10^5)
     L = length(As)
     C = 2^L # 4^L / 2^L
-    estimate = sum(1:nsamples) do _
+    estimate = ThreadsX.sum(1:nsamples) do _
         Os = sample_paulistring(L)
         expectation(As, Os)^4
     end / nsamples * C
