@@ -1,3 +1,4 @@
 using RenyiEntropyOfMagic
 
-prepare_states(20, 0.1:0.1:2.5)
+N = parse(Int, ARGS[1])
+prepare_states(N, 0.1:0.1:2.5)

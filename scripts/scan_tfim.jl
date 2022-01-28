@@ -5,5 +5,6 @@ addprocs(48; exeflags=["--project"])
     using RenyiEntropyOfMagic
 end
 
-results = scan_tfim_renyi_entropy(20; nsamples=10^4)
-serialize(pkgdir(RenyiEntropyOfMagic, "data", "20-sites-result.dat"), results)
+N = parse(Int, ARGS[1])
+results = scan_tfim_renyi_entropy(N; nsamples=10^6)
+serialize(pkgdir(RenyiEntropyOfMagic, "data", "$N-sites-result.dat"), results)
