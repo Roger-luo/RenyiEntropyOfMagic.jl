@@ -52,3 +52,12 @@ function exact_tfim_renyi_entropy(N, h)
   As = get_matrices(N, h)
   return exact_renyi_entropy(As)/N
 end
+
+export scan_tfim_renyi_entropy
+function scan_tfim_renyi_entropy(N, hs)
+    As = get_matrices(N, h)
+    return pmap(hs) do h
+        @info "running" h
+        tfim_renyi_entropy(N, h)
+    end
+end

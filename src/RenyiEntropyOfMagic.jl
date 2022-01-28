@@ -1,7 +1,7 @@
 module RenyiEntropyOfMagic
 
 using ITensors
-
+using Distributed
 include("dmrg.jl")
 
 using LinearAlgebra
