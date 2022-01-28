@@ -64,11 +64,15 @@ function prepare_states(N, hs)
     serialize(data_dir("$N-sites.mps"), hs=>As)
 end
 
+function read_matrices(N)
+    deserialize(data_dir("$N-sites.mps"))
+end
+
 export scan_tfim_renyi_entropy
-function scan_tfim_renyi_entropy(N, hs; nsamples=10^6)
-    return pmap(hs) do h
+function scan_tfim_renyi_entropy(N; nsamples=10^6)
+    hs, As = read_matrices(N)
+    return pmap(zip(hs, As)) do h, A
         @info "running" h
-        As = get_matrices(N, h)
-        return renyi_entropy(As; nsamples)/N
+        return renyi_entropy(A; nsamples)/N
     end
 end
