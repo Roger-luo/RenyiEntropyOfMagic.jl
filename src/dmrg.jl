@@ -71,7 +71,7 @@ end
 export scan_tfim_renyi_entropy
 function scan_tfim_renyi_entropy(N; nsamples=10^6)
     hs, As = read_matrices(N)
-    return pmap(zip(hs, As)) do h, A
+    return pmap(zip(hs, As)) do (h, A)
         @info "running" h
         return renyi_entropy(A; nsamples)/N
     end
