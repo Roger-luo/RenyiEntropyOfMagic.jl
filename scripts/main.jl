@@ -1,0 +1,2 @@
+using RenyiEntropyOfMagic
+RenyiEntropyOfMagic.command_main()
