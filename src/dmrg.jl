@@ -53,11 +53,22 @@ function exact_tfim_renyi_entropy(N, h)
   return exact_renyi_entropy(As)/N
 end
 
+data_dir(xs...) = joinpath(pkgdir(RenyiEntropyOfMagic, "data", xs...))
+
+export prepare_states
+function prepare_states(N, hs)
+    isdir(data_dir()) || mkpath(data_dir())
+    As = pmap(hs) do h
+        get_matrices(N, h)
+    end
+    serialize(data_dir("$N-sites.mps"), hs=>As)
+end
+
 export scan_tfim_renyi_entropy
-function scan_tfim_renyi_entropy(N, hs)
-    As = get_matrices(N, h)
+function scan_tfim_renyi_entropy(N, hs; nsamples=10^6)
     return pmap(hs) do h
         @info "running" h
-        tfim_renyi_entropy(N, h)
+        As = get_matrices(N, h)
+        return renyi_entropy(As; nsamples)/N
     end
 end

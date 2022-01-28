@@ -2,6 +2,7 @@ module RenyiEntropyOfMagic
 
 using ITensors
 using Distributed
+using Serialization
 include("dmrg.jl")
 
 using LinearAlgebra
