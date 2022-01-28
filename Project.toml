@@ -16,6 +16,7 @@ TerminalLoggers = "5d786b92-1e48-4d6f-9151-6b4477ca9bed"
 Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
 
 [compat]
+TerminalLoggers = "0.1"
 julia = "1.7"
 
 [extras]
