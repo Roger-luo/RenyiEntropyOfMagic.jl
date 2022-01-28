@@ -58,3 +58,9 @@ mean(1:10^6) do _
     expectation(As, Os)^4
 end * 4^3
 renyi_entropy(As)
+
+exact_renyi_entropy(As, Os)
+A = rand(2, 4, 2)
+O = rand(2, 2)
+transfer_matrix(A, O)
+

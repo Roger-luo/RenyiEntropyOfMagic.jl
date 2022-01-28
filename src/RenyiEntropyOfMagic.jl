@@ -1,10 +1,15 @@
 module RenyiEntropyOfMagic
 
+using ITensors
+
+include("dmrg.jl")
+
 using LinearAlgebra
 using ProgressLogging
 
 export Consts, transfer_matrix, boundary_vector, expectation,
-    sample_paulistring, renyi_entropy
+    sample_paulistring, renyi_entropy, exact_renyi_entropy,
+    enumerate_paulistring
 
 module Consts
 
@@ -44,12 +49,8 @@ function expectation(As, Os)
     lT = boundary_vector(lA, lO)
     rT = boundary_vector(rA, rO)
     T = rT
-    for idx in 2:length(As)-1
+    for idx in length(As)-1:-1:2
         A, O = As[idx], Os[idx]
-        @show size(A)
-        @show size(O)
-        @show size(transfer_matrix(A, O))
-        @show size(T)
         T = transfer_matrix(A, O) * T
     end
     return transpose(lT) * T
@@ -80,6 +81,30 @@ function renyi_entropy(As; nsamples::Int=10^5)
         expectation(As, Os)^4
     end / nsamples * C
     return -log(estimate)
+end
+
+function enumerate_paulistring(L::Int)
+    labels_a = Iterators.product([0:1 for _ in 1:L]...)
+    labels_b = Iterators.product([0:1 for _ in 1:L]...)
+    
+    return map(Iterators.product(labels_a, labels_b)) do (as, bs)
+        map(zip(as, bs)) do (a, b)
+            if a == 0 && b == 0
+                Consts.I2
+            elseif a == 0 && b == 1
+                Consts.Z
+            elseif a == 1 && b == 0
+                Consts.X
+            else # 11
+                Consts.X * Consts.Z
+            end
+        end
+    end |> vec
+end
+
+function exact_renyi_entropy(As)
+    expect = sum(expectation(As, Os)^4 for Os in enumerate_paulistring(length(As)))    
+    return -log(expect / 2^length(As))
 end
 
 end

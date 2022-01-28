@@ -1,53 +1,49 @@
-# In this example we show how to pass a DMRGObserver to
-# the dmrg function which allows tracking energy convergence and
-# convergence of local operators.
-using ITensors
-using RenyiEntropyOfMagic
-using TerminalLoggers
-using Logging: global_logger
-using TerminalLoggers: TerminalLogger
+using Distributed
+addprocs(5; exeflags=["--project"])
+@everywhere using RenyiEntropyOfMagic
+using Serialization
 
-if !@isdefined(VSCodeServer)
-    global_logger(TerminalLogger())
+mc_M2 = pmap(0.1:0.1:2.5) do h
+  @info "running" h
+  tfim_renyi_entropy(20, h)
 end
-
-"""
-  Get MPO of transverse field Ising model Hamiltonian with field strength h
-"""
-function tfimMPO(sites, h::Float64)
-  # Input operator terms which define a Hamiltonian
-  N = length(sites)
-  ampo = OpSum()
-  for j in 1:(N - 1)
-    ampo += -1, "Z", j, "Z", j + 1
-  end
-  for j in 1:N
-    ampo += h, "X", j
-  end
-  # Convert these terms to an MPO tensor network
-  return MPO(ampo, sites)
-end
-
-N = 100
-sites = siteinds("S=1/2", N)
-psi0 = randomMPS(sites; linkdims=16)
-
-# define parameters for DMRG sweeps
-sweeps = Sweeps(15)
-setmaxdim!(sweeps, 10, 20, 100, 100, 200)
-setcutoff!(sweeps, 1E-8)
-
-H = tfimMPO(sites, 1.0)
-energy, psi = dmrg(H, psi0, sweeps)
+serialize("20.dat", mc_M2)
 
 
-As = map(psi.data) do t
-    T = reshape(t.tensor.storage.data, size(t))
-    if ndims(T) == 2
-      return T
-    else
-      return permutedims(T, (3, 1, 2))
-    end
-end
+# using Yao
+# L = 8
+# tfim_h = -sum(kron(L, i=>Z, mod1(i+1, L)=>Z) for i in 1:L) - sum(put(L, i=>X) for i in 1:L)
+# mat(Z)
+# H = Matrix(mat(tfim_h))
+# using LinearAlgebra
 
-size.(As)
+# eigmin(H)
+# eigvals(H)
+# psi = eigvecs(H)[:, 1]
+
+# Os = enumerate_paulistring(L)
+
+# -log(sum((psi' * kron(O...) * psi)^4 for O in Os)/2^L)/L
+
+# exact_tfim_renyi_entropy(8, 1.0)
+
+# As = get_matrices(8, 1.0)
+# exact_renyi_entropy(As)
+
+# renyi_entropy(As; nsamples=10^6)
+
+# mc_M2 = [tfim_renyi_entropy(20, h) for h in 0.1:0.1:2.5]
+
+# exact_M2 = [exact_tfim_renyi_entropy(290, h) for h in 0.1:0.1:2.5]
+
+# tfim_renyi_entropy(20, 1.0)
+# exact_tfim_renyi_entropy(8, 0.1)
+
+
+# using CairoMakie
+
+# lines(exact_M2)
+
+# i = Index(2, "S=1/2")
+# j = Index(2, "S=1/2")
+# println(ITensors.op("X", i))
