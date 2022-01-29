@@ -21,6 +21,7 @@ ThreadsX = "ac1d9e8a-700a-412c-b207-f0111f4b6c0d"
 Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
 
 [compat]
+Comonicon = "0.12"
 julia = "1.7"
 
 [extras]
